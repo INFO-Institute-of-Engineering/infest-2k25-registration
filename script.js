@@ -60,7 +60,7 @@ document.getElementById('submit-btn').addEventListener('click', function(e) {
         // Simulate Razorpay integration
         const options = {
             key: 'rzp_test_YOUR_KEY_HERE', // Replace with your actual Razorpay key in production
-            amount: 50000, // Amount in paise (500 INR)
+            amount: 250, // Amount in paise (250 INR)
             currency: 'INR',
             name: 'Event Registration',
             description: 'Registration Fee',
@@ -174,3 +174,53 @@ function sendConfirmationEmail(data, isOffline) {
     console.log('Email data:', emailData);
     // In a real implementation, you would make an API call to your backend
 }
+
+// Event data for each department
+const departmentEvents = {
+    cse: ["AI Workshop", "Web Development Hackathon", "Cybersecurity Challenge", "Data Science Seminar"],
+    ece: ["IoT Workshop", "Embedded Systems Contest", "VLSI Design Challenge", "Signal Processing Seminar"],
+    mech: ["Robotics Workshop", "Thermal Engineering Seminar", "Automobile Design Contest", "Manufacturing Expo"]
+};
+
+// Handle department selection to show event list
+document.getElementById('department').addEventListener('change', function() {
+    const selectedDepartment = this.value;
+    const eventSelectionSection = document.getElementById('event-selection');
+    const eventList = document.getElementById('event-list');
+
+    // Clear previous event list
+    eventList.innerHTML = '';
+
+    // Show event selection section if a department is selected
+    if (selectedDepartment && selectedDepartment !== '') {
+        eventSelectionSection.classList.remove('hidden');
+
+        // Populate event list
+        departmentEvents[selectedDepartment].forEach(event => {
+            const eventOption = document.createElement('div');
+            eventOption.className = 'event-option';
+            eventOption.innerHTML = `
+                <input type="checkbox" id="event-${event}" name="events" value="${event}">
+                <label for="event-${event}">${event}</label>
+            `;
+            eventList.appendChild(eventOption);
+        });
+    } else {
+        eventSelectionSection.classList.add('hidden');
+    }
+});
+
+// Handle form submission
+document.getElementById('submit-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+
+    // Validate event selection
+    const selectedEvents = Array.from(document.querySelectorAll('input[name="events"]:checked')).map(el => el.value);
+    if (selectedEvents.length < 2 || selectedEvents.length > 3) {
+        alert('Please select 2-3 events.');
+        return;
+    }
+
+    // Rest of the form validation and submission logic...
+    // (Keep the existing code for form validation and submission)
+});
