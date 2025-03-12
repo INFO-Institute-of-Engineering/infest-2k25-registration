@@ -163,6 +163,36 @@
     100% { transform: scale(1.05); }
   }
   
+  /* Event Logo Styles */
+    .event-logo {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    }
+
+    .event-logo img {
+    width: 150px; /* Adjust the size as needed */
+    height: auto;
+    border-radius: 10px; /* Optional: Add rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+    }
+
+/* College Logo Styles */
+    .college-logo {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    }
+
+    .college-logo img {
+    width: 150px; /* Adjust the size as needed */
+    height: auto;
+    border-radius: 10px; /* Optional: Add rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+    }
+
   .header h1 {
     font-size: 32px;
     font-weight: 700;
