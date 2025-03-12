@@ -177,9 +177,15 @@ function sendConfirmationEmail(data, isOffline) {
 
 // Event data for each department
 const departmentEvents = {
-    cse: ["AI Workshop", "Web Development Hackathon", "Cybersecurity Challenge", "Data Science Seminar"],
-    ece: ["IoT Workshop", "Embedded Systems Contest", "VLSI Design Challenge", "Signal Processing Seminar"],
-    mech: ["Robotics Workshop", "Thermal Engineering Seminar", "Automobile Design Contest", "Manufacturing Expo"]
+    cse: ["Paper Presentation", "Project Presentation", "Google Hunt", "Crash Your Codes", "Web Master", "Gaming"],
+    it: ["Paper Presentation", "Project Presentation", "Google Hunt", "Crash Your Codes", "Web Master", "Gaming"],
+    aids: ["Paper Presentation", "Project Presentation", "Google Hunt", "Crash Your Codes", "Web Master", "Gaming"],
+    civil: ["Paper Presentation", "Project Presentaion", "CAD Master", "Fun Series", "Watery Rocketry", "Mr. Mechanic"],
+    eee: ["Paper Presentation", "Project Presentaion", "Tech Connections", "Circuit Debugging", "Technical Quiz", "Treasure Hunt"],
+    ece: ["Paper Presentation", "Project Presentaion", "Tech Connections", "Circuit Debugging", "Technical Quiz", "Treasure Hunt"],
+    mech: ["Paper Presentation", "Project Presentaion", "CAD Master", "Fun Series", "Watery Rocketry", "Mr. Mechanic"],
+    sandh: ["Paper Presentation", "Fun Quiz", "Technical Debate", "Pencil Sketch & Painting", "Math Puzzles", "Karaoke Singing", "Drama or Mime"],
+    mba: ["Paper Presentation", "Best Manager", "Business Quiz", "ADZAP", "Corporate Stall", "Treasure Hunt"]
 };
 
 // Handle department selection to show event list
@@ -221,6 +227,90 @@ document.getElementById('submit-btn').addEventListener('click', function(e) {
         return;
     }
 
-    // Rest of the form validation and submission logic...
-    // (Keep the existing code for form validation and submission)
+    // Basic form validation
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const whatsapp = document.getElementById('whatsapp').value;
+    const college = document.getElementById('college').value;
+    const year = document.getElementById('year').value;
+    const department = document.getElementById('department').value;
+    const projectLink = document.getElementById('project-link').value;
+    const paymentMode = document.querySelector('input[name="payment-mode"]:checked')?.value;
+
+    if (!name || !email || !phone || !whatsapp || !college || !year || !department || !projectLink || !paymentMode) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+
+    // Validate Google Drive link
+    if (!projectLink.includes('drive.google.com')) {
+        alert('Please provide a valid Google Drive link for your project/paper.');
+        return;
+    }
+
+    // Simulate successful registration
+    completeRegistration();
 });
+
+function completeRegistration() {
+    // Generate a unique registration ID
+    const registrationId = 'REG' + Date.now().toString().slice(-6);
+
+    // Get form values for QR code and ticket
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const department = document.getElementById('department').value;
+    const departmentText = document.getElementById('department').options[document.getElementById('department').selectedIndex].text;
+
+    // Registration data to be sent to backend (in a real implementation)
+    const registrationData = {
+        registrationId: registrationId,
+        name: name,
+        email: email,
+        phone: document.getElementById('phone').value,
+        whatsapp: document.getElementById('whatsapp').value,
+        college: document.getElementById('college').value,
+        year: document.getElementById('year').value,
+        department: department,
+        projectLink: document.getElementById('project-link').value,
+        paymentMode: document.querySelector('input[name="payment-mode"]:checked').value,
+        timestamp: new Date().toISOString()
+    };
+
+    // Log registration data to the console
+    console.log('Registration data:', registrationData);
+
+    // Show success message and QR code
+    document.getElementById('registration-form').classList.add('hidden');
+    document.getElementById('success-container').classList.remove('hidden');
+    document.getElementById('registration-id').textContent = registrationId;
+
+    // Set ticket information
+    document.getElementById('ticket-name').textContent = name;
+    document.getElementById('ticket-email').textContent = email;
+    document.getElementById('ticket-department').textContent = departmentText;
+
+    // Generate QR code
+    const qrData = JSON.stringify({
+        registrationId: registrationId,
+        name: name,
+        email: email,
+        department: departmentText,
+        paymentStatus: registrationData.paymentMode === 'online' ? 'PAID' : 'PENDING'
+    });
+
+    new QRCode(document.getElementById('qrcode'), {
+        text: qrData,
+        width: 200,
+        height: 200,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    // Show offline payment message if applicable
+    if (registrationData.paymentMode === 'offline') {
+        document.getElementById('offline-message').classList.remove('hidden');
+    }
+}
