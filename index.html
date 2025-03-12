@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+</head>
+<body>
+    <div class="header">
+        <img src="infest-2k25 logo.png" alt="Event Logo" class="logo">
+    </div>
+
+    <div class="container animate__animated animate__fadeIn">
+        <h1>Event Registration</h1>
+        
+        <div id="registration-form">
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email ID *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="whatsapp">WhatsApp Number *</label>
+                <input type="tel" id="whatsapp" name="whatsapp" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="college">Name of the College *</label>
+                <input type="text" id="college" name="college" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="year">Year of Study *</label>
+                <select id="year" name="year" required>
+                    <option value="">Select Year</option>
+                    <option value="1">1st Year</option>
+                    <option value="2">2nd Year</option>
+                    <option value="3">3rd Year</option>
+                    <option value="4">4th Year</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="department">Department Name *</label>
+                <select id="department" name="department" required>
+                    <option value="">Select Department</option>
+                    <option value="civil">Civil Engineering</option>
+                    <option value="cse">Computer Science and Engineering</option>
+                    <option value="aids">Artificial Intelligence & Data Science</option>
+                    <option value="ece">Electronics and Communication Engineering</option>
+                    <option value="eee">Electrical and Electronics Engineering</option>
+                    <option value="it">Information Technology</option>
+                    <option value="mech">Mechanical Engineering</option>
+                    <option value="sh">Science & Humanities</option>
+                    <option value="mba">Masters of Business Administration</option>
+                </select>
+            </div>
+            
+            <!-- Department-specific options as checkboxes -->
+            <div id="dept-specific-options" class="form-group hidden animate__animated animate__fadeIn">
+                <label>Select Options * (Choose 2-3 options)</label>
+                <div id="dept-options-container" class="checkbox-container">
+                    <!-- Checkboxes will be added here dynamically -->
+                </div>
+                <input type="hidden" id="selected-dept-options" name="selected-dept-options">
+            </div>
+            
+            <div class="form-group">
+                <label for="project-link">Project/Paper Link (Google Drive link only) </label>
+                <input type="url" id="project-link" name="project-link" placeholder="https://drive.google.com/..." >
+            </div>
+            
+            <div class="form-group">
+                <label>Mode of Payment *</label>
+                <div class="payment-options">
+                    <div class="payment-option" data-mode="online" onclick="selectPaymentMode(this)">
+                        Online Payment (Razorpay)
+                    </div>
+                    <div class="payment-option" data-mode="offline" onclick="selectPaymentMode(this)">
+                        Offline Payment
+                    </div>
+                </div>
+                <input type="hidden" id="payment-mode" name="payment-mode">
+            </div>
+            
+            <button type="button" id="submit-btn" onclick="submitForm()">
+                Complete Registration
+            </button>
+        </div>
+        
+        <div class="loader" id="loader">
+            <div></div>
+            <p>Processing your registration...</p>
+        </div>
+        
+        <div id="success-message" class="success-message hidden">
+            <h2 class="animate__animated animate__fadeInUp">Registration Successful!</h2>
+            <div id="offline-success" class="hidden animate__animated animate__fadeInUp animate__delay-1s">
+                <p>Your registration is complete. Please make the payment at the venue.</p>
+                <p>Your registration number:</p>
+                <div class="registration-number" id="registration-number"></div>
+                <p>We have sent the registration details to your email.</p>
+            </div>
+            <div id="online-success" class="hidden animate__animated animate__fadeInUp animate__delay-1s">
+                <p>Thank you for registering! We have sent the registration details to your email.</p>
+                <p>You will receive your registration number after payment confirmation.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
