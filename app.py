@@ -22,7 +22,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # MongoDB Atlas Configuration
-mongo_uri = os.getenv("mongodb+srv://infest2k25userdata:308MXoSbS0z6LPcq@infest2k25userregistrat.6iobv.mongodb.net/?retryWrites=true&w=majority&appName=INFEST2K25UserRegistration", "mongodb+srv://infest2k25userdata:308MXoSbS0z6LPcq@cluster0.mongodb.net/")
+mongo_uri = os.getenv("MONGO_URI")
 client = MongoClient(mongo_uri, server_api=ServerApi('1'))
 db = client.event_registration_db
 registrations = db.registrations
@@ -178,9 +178,10 @@ def register():
             "payment_status": "PENDING",
             "registration_date": pymongo.datetime.datetime.utcnow()
         }
-        
         # Save registration to MongoDB
         registrations.insert_one(registration)
+        print("Received Data:", data)
+        
         
         # Generate QR code
         qr_code = generate_qr_code(registration_id)
@@ -325,4 +326,4 @@ def health_check():
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=True)
