@@ -22,7 +22,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # MongoDB Atlas Configuration
-mongo_uri = os.getenv("MONGO_URI", "mongodb+srv://your_username:your_password@cluster0.mongodb.net/")
+mongo_uri = os.getenv("mongodb+srv://infest2k25userdata:308MXoSbS0z6LPcq@infest2k25userregistrat.6iobv.mongodb.net/?retryWrites=true&w=majority&appName=INFEST2K25UserRegistration", "mongodb+srv://infest2k25userdata:308MXoSbS0z6LPcq@cluster0.mongodb.net/")
 client = MongoClient(mongo_uri, server_api=ServerApi('1'))
 db = client.event_registration_db
 registrations = db.registrations
@@ -33,8 +33,8 @@ razorpay_key_secret = os.getenv("RAZORPAY_KEY_SECRET", "your_razorpay_key_secret
 razorpay_client = razorpay.Client(auth=(razorpay_key_id, razorpay_key_secret))
 
 # Email Configuration
-email_sender = os.getenv("EMAIL_SENDER", "your_email@gmail.com")
-email_password = os.getenv("EMAIL_PASSWORD", "your_app_password")
+email_sender = os.getenv("infest2k25", "infest2k25@gmail.com")
+email_password = os.getenv("INFO@2732", "rmac uddi oxbj qaxa")
 smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 smtp_port = int(os.getenv("SMTP_PORT", "587"))
 
