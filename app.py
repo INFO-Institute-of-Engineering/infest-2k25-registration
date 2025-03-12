@@ -49,6 +49,67 @@ departments = {
     "S & H": ["Paper Presentation", "Fun Quiz", "Technical Debate", "Pencil Sketch & Painting", "Math Puzzles", "Karaoke Singing", "Dance or Mime"],
     "MBA": ["Paper Presentation", "Best Manager", "Business Quiz", "ADZAP", "Corporate Walk", "Corporate Stall", "Treasure Hunt"],
 }
+# API route for user registration
+@app.route('/api/register', methods=['POST'])
+def register():
+    try:
+        data = request.json
+        
+        # Validate required fields
+        required_fields = ['name', 'email', 'phone', 'whatsapp', 'college', 'year', 'department', 'department_option', 'project_link', 'payment_mode']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+        
+        # Generate unique registration ID
+        registration_id = str(uuid.uuid4())
+        
+        # Create registration object
+        registration = {
+            "_id": registration_id,
+            "name": data['name'],
+            "email": data['email'],
+            "phone": data['phone'],
+            "whatsapp": data['whatsapp'],
+            "college": data['college'],
+            "year": data['year'],
+            "department": data['department'],
+            "department_option": data['department_option'],
+            "project_link": data['project_link'],
+            "payment_mode": data['payment_mode'],
+            "payment_status": "PENDING",
+            "registration_date": pymongo.datetime.datetime.utcnow()
+        }
+        # Save registration to MongoDB
+        registrations.insert_one(registration)
+        print("Received Data:", data)
+                # Generate QR code
+        qr_code = generate_qr_code(registration_id)
+        qr_code_base64 = base64.b64encode(qr_code).decode('utf-8')
+        
+        response_data = {"registration_id": registration_id, "qr_code": qr_code_base64}
+        
+        # Handle payment based on mode
+        if data['payment_mode'] == 'ONLINE':
+            # Create Razorpay order
+            order_data = {
+                'amount': event_fee * 100,  # Amount in paise
+                'currency': 'INR',
+                'receipt': f'receipt_{registration_id}',
+                'notes': {
+                    'registration_id': registration_id
+                }
+            }
+            order = razorpay_client.order.create(data=order_data)
+            response_data['order'] = order
+        else:  # OFFLINE payment
+            # Send confirmation email with QR code for offline payment
+            send_confirmation_email(data['email'], registration, qr_code, "PENDING")
+        
+        return jsonify(response_data)
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Helper function to generate QR code
 def generate_qr_code(registration_id):
@@ -146,70 +207,9 @@ def get_department_options(department):
     if department in departments:
         return jsonify(departments[department])
     return jsonify({"error": "Department not found"}), 404
+        
+        
 
-# API route for user registration
-@app.route('/api/register', methods=['POST'])
-def register():
-    try:
-        data = request.json
-        
-        # Validate required fields
-        required_fields = ['name', 'email', 'phone', 'whatsapp', 'college', 'year', 'department', 'department_option', 'project_link', 'payment_mode']
-        for field in required_fields:
-            if field not in data:
-                return jsonify({"error": f"Missing required field: {field}"}), 400
-        
-        # Generate unique registration ID
-        registration_id = str(uuid.uuid4())
-        
-        # Create registration object
-        registration = {
-            "_id": registration_id,
-            "name": data['name'],
-            "email": data['email'],
-            "phone": data['phone'],
-            "whatsapp": data['whatsapp'],
-            "college": data['college'],
-            "year": data['year'],
-            "department": data['department'],
-            "department_option": data['department_option'],
-            "project_link": data['project_link'],
-            "payment_mode": data['payment_mode'],
-            "payment_status": "PENDING",
-            "registration_date": pymongo.datetime.datetime.utcnow()
-        }
-        # Save registration to MongoDB
-        registrations.insert_one(registration)
-        print("Received Data:", data)
-        
-        
-        # Generate QR code
-        qr_code = generate_qr_code(registration_id)
-        qr_code_base64 = base64.b64encode(qr_code).decode('utf-8')
-        
-        response_data = {"registration_id": registration_id, "qr_code": qr_code_base64}
-        
-        # Handle payment based on mode
-        if data['payment_mode'] == 'ONLINE':
-            # Create Razorpay order
-            order_data = {
-                'amount': event_fee * 100,  # Amount in paise
-                'currency': 'INR',
-                'receipt': f'receipt_{registration_id}',
-                'notes': {
-                    'registration_id': registration_id
-                }
-            }
-            order = razorpay_client.order.create(data=order_data)
-            response_data['order'] = order
-        else:  # OFFLINE payment
-            # Send confirmation email with QR code for offline payment
-            send_confirmation_email(data['email'], registration, qr_code, "PENDING")
-        
-        return jsonify(response_data)
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 # API route to verify Razorpay payment
 @app.route('/api/verify-payment', methods=['POST'])
