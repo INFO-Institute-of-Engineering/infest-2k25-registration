@@ -1,6 +1,6 @@
 // Handle department selection to show specific options
 document.getElementById('department').addEventListener('change', function() {
-    const departments = ['civil', 'cse', 'ece', 'eee', 'it', 'mech', 'sh'];
+    const departments = ['civil', 'aids', 'cse', 'mba', 'ece', 'eee', 'it', 'mech', 'sandh'];
     const selectedDepartment = this.value;
     
     // Hide all department option divs
