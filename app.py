@@ -39,17 +39,15 @@ smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 smtp_port = int(os.getenv("SMTP_PORT", "587"))
 
 # Event Configuration
-event_fee = int(os.getenv("EVENT_FEE", "500"))  # Amount in rupees
+event_fee = int(os.getenv("250", "500"))  # Amount in rupees
 
 # Department options
 departments = {
-    "Civil Engineering": ["Option 1", "Option 2", "Option 3"],
-    "Computer Science and Engineering": ["Option 1", "Option 2", "Option 3"],
-    "Electronics and Communication Engineering": ["Option 1", "Option 2", "Option 3"],
-    "Electrical and Electronics Engineering": ["Option 1", "Option 2", "Option 3"],
-    "Information Technology": ["Option 1", "Option 2", "Option 3"],
-    "Mechanical Engineering": ["Option 1", "Option 2", "Option 3"],
-    "Science & Humanities": ["Option 1", "Option 2", "Option 3"]
+    "CSE, IT,AI & DS": ["Paper Presentation", "Project Presentation", "Google Hunt", "Crash Your Codes", "Web Master", "Gaming"],
+    "ECE & EEE": ["Paper Presentation", "Project Presentation", "Tech Connection", "Circuit Debugging", "Technical Quiz", "Treasure Hunt"],
+    "MECH": ["Paper Presentation", "Project Presentation", "CAD Master", "Fun Series", "Water Rocketry", "Mr. Mechanic"],
+    "S & H": ["Paper Presentation", "Fun Quiz", "Technical Debate", "Pencil Sketch & Painting", "Math Puzzles", "Karaoke Singing", "Dance or Mime"],
+    "MBA": ["Paper Presentation", "Best Manager", "Business Quiz", "ADZAP", "Corporate Walk", "Corporate Stall", "Treasure Hunt"],
 }
 
 # Helper function to generate QR code
