@@ -15,6 +15,8 @@ from dotenv import load_dotenv
 import io
 import base64
 from bson import ObjectId
+import datetime
+
 
 # Load environment variables
 load_dotenv()
@@ -24,8 +26,8 @@ app = Flask(__name__)
 # MongoDB Atlas Configuration
 mongo_uri = os.getenv("MONGO_URI")
 client = MongoClient(mongo_uri, server_api=ServerApi('1'))
-db = client.event_registration_db
-registrations = db.registrations
+db = client['event_registration_db']  # Database name in square brackets
+registrations = db['registrations'] # Collection name in square brackets
 
 # Razorpay Configuration
 razorpay_key_id = os.getenv("RAZORPAY_KEY_ID", "your_razorpay_key_id")
@@ -50,66 +52,74 @@ departments = {
     "MBA": ["Paper Presentation", "Best Manager", "Business Quiz", "ADZAP", "Corporate Walk", "Corporate Stall", "Treasure Hunt"],
 }
 # API route for user registration
-@app.route('/api/register', methods=['POST'])
-def register():
-    try:
-        data = request.json
+#@app.route('/api/register', methods=['POST'])
+#def register():
+#    try:
+#        data = request.get_json()  # No force=True to avoid unexpected behavior
+#        
+#        if not data:
+#            return jsonify({"error": "Invalid JSON format or empty body"}), 400
+#
+#        # Validation
+#        required_fields = [
+#            'name', 'email', 'phone', 'whatsapp', 'college', 
+#            'year', 'department', 'department_option', 
+#            'project_link', 'payment_mode'
+#        ]
         
-        # Validate required fields
-        required_fields = ['name', 'email', 'phone', 'whatsapp', 'college', 'year', 'department', 'department_option', 'project_link', 'payment_mode']
-        for field in required_fields:
-            if field not in data:
-                return jsonify({"error": f"Missing required field: {field}"}), 400
+#        for field in required_fields:
+#            if field not in data:
+#                return jsonify({"error": f"Missing required field: {field}"}), 400
         
         # Generate unique registration ID
-        registration_id = str(uuid.uuid4())
+#        registration_id = str(uuid.uuid4())
         
         # Create registration object
-        registration = {
-            "_id": registration_id,
-            "name": data['name'],
-            "email": data['email'],
-            "phone": data['phone'],
-            "whatsapp": data['whatsapp'],
-            "college": data['college'],
-            "year": data['year'],
-            "department": data['department'],
-            "department_option": data['department_option'],
-            "project_link": data['project_link'],
-            "payment_mode": data['payment_mode'],
-            "payment_status": "PENDING",
-            "registration_date": pymongo.datetime.datetime.utcnow()
-        }
+#        registration = {
+#            "id": registration_id,
+#            "name": data['name'],
+#            "email": data['email'],
+#            "phone": data['phone'],
+#            "whatsapp": data['whatsapp'],
+#            "college": data['college'],
+#            "year": data['year'],
+#            "department": data['department'],
+#             "department_option": data['department_option'],
+#            "project_link": data['project_link'],
+#            "payment_mode": data['payment_mode'],
+#            "payment_status": "PENDING",
+#            "registration_date": pymongo.datetime.datetime.utcnow()
+#        }
         # Save registration to MongoDB
-        registrations.insert_one(registration)
-        print("Received Data:", data)
+#        registrations.insert_one(registration)
+#        print("Received Data:", data)
                 # Generate QR code
-        qr_code = generate_qr_code(registration_id)
-        qr_code_base64 = base64.b64encode(qr_code).decode('utf-8')
+#        qr_code = generate_qr_code(registration_id)
+#        qr_code_base64 = base64.b64encode(qr_code).decode('utf-8')
         
-        response_data = {"registration_id": registration_id, "qr_code": qr_code_base64}
+#        response_data = {"registration_id": registration_id, "qr_code": qr_code_base64}
         
         # Handle payment based on mode
-        if data['payment_mode'] == 'ONLINE':
+#        if data['payment_mode'] == 'ONLINE':
             # Create Razorpay order
-            order_data = {
-                'amount': event_fee * 100,  # Amount in paise
-                'currency': 'INR',
-                'receipt': f'receipt_{registration_id}',
-                'notes': {
-                    'registration_id': registration_id
-                }
-            }
-            order = razorpay_client.order.create(data=order_data)
-            response_data['order'] = order
-        else:  # OFFLINE payment
-            # Send confirmation email with QR code for offline payment
-            send_confirmation_email(data['email'], registration, qr_code, "PENDING")
+#            order_data = {
+#                'amount': event_fee * 100,  # Amount in paise
+#                'currency': 'INR',
+#                'receipt': f'receipt_{registration_id}',
+#                'notes': {
+#                    'registration_id': registration_id
+#                }
+#            }
+#            order = razorpay_client.order.create(data=order_data)
+#            response_data['order'] = order
+#        else:  # OFFLINE payment
+#            # Send confirmation email with QR code for offline payment
+#            send_confirmation_email(data['email'], registration, qr_code, "PENDING")
         
-        return jsonify(response_data)
+#        return jsonify(response_data)
     
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+#    except Exception as e:
+#        return jsonify({"error": str(e)}), 500
 
 # Helper function to generate QR code
 def generate_qr_code(registration_id):
@@ -326,4 +336,54 @@ def health_check():
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 5000))
+@app.route('/api/test_insert', methods=['GET'])
+def test_insert():
+    test_data = {
+       "name": "Dee",
+        "email": "john.doe@example.com",
+        "phone": "9876543210",
+        "whatsapp": "9876543210",
+        "college": "INFO Institute of Engineering",
+        "year": "Final Year",
+        "department": "CSE, IT, AI & DS",
+        "department_option": "Paper Presentation",
+        "project_link": "https://github.com/example/project",
+        "payment_mode": "ONLINE"
+    }
+
+    registration_id = str(uuid.uuid4())
+    test_data['id'] = registration_id
+    test_data['payment_status'] = "PENDING"
+    test_data['registration_date'] = datetime.datetime.utcnow()
+ 
+    registrations.insert_one(test_data)
+    return jsonify({"message": "Test data inserted successfully", "id": registration_id})
+
+@app.route('/')
+def home():
+    return "Server is running!"
+#@app.route('/api/test_insert', methods=['GET'])  # Ensure this matches your request method
+#def test_insert():
+ #   return jsonify({"message": "Test route working fine!"})
+@app.route('/api/register', methods=['POST'])
+def register():
+    data = request.get_json()
+
+    # Required fields
+    required_fields = ['name', 'email', 'phone', 'whatsapp', 'college', 
+                       'year', 'department', 'department_option', 'project_link']
+
+    # Check for missing fields
+    missing_fields = [field for field in required_fields if field not in data]
+    if missing_fields:
+        return jsonify({"error": f"Missing fields: {', '.join(missing_fields)}"}), 400
+
+    # Insert data into MongoDB
+    try:
+        registrations.insert_one(data)
+        return jsonify({"success": "Data registered successfully!"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
